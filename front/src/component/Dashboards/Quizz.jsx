@@ -129,7 +129,7 @@ const Quiz = () => {
               </button>
               <p style={{ color: "green" }}>✔ Correct Answers: {score}</p>
               <p style={{ color: "red" }}>✖ Incorrect Answers: {quizData.length - score}</p>
-              <a href="#" style={{ color: "#1abc9c" }}>Select Another Quiz</a>
+             {/* <a  style={{ color: "#1abc9c" }}>Select Another Quiz</a> */}
             </div>
           ) : (
             <>

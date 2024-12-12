@@ -24,6 +24,7 @@
     "dayjs": "^1.11.13",
     "dev": "file:",
     "formik": "^2.4.6",
+    "jspdf": "^2.5.2",
     "mdb-react-ui-kit": "^9.0.0",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.5",
