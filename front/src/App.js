@@ -18,7 +18,7 @@ import CourseComponent from './component/Dashboards/Usercours'
 import MachineLearning from './component/Dashboards/video/Machinelearning';
 import Web from './component/Dashboards/video/Dev';
 import AllCv from './component/Dashboards/Admin/AfficheCv'
-import UserProfile from './component/Dashboards/SettingUser';
+import SettingsPage from './component/Dashboards/SettingUser';
 import QuizLandingPage from './component/Dashboards/Admin/Createquiz';
 import QuizBuilder from './component/Dashboards/Admin/Allquiz';
 import AfficheQuiz from './component/Dashboards/Affichequiz';
@@ -49,8 +49,7 @@ function App() {
             <Route path="/cours" element={<CourseComponent />} />
             <Route path="/categories/ml" element={<MachineLearning />} />
             <Route path="/categories/web-dev" element={<Web />} />
-            <Route path="/setting-user" element={<UserProfile />} />
-            <Route path="/setting-user" element={<UserProfile />} />
+            <Route path="/setting-user" element={<SettingsPage />} />
             <Route path="/admin-quiz" element={<QuizLandingPage />} />
             <Route path="/create-quiz" element={<QuizBuilder />} />
             <Route path="/Affiche-quiz" element={<AfficheQuiz />} />

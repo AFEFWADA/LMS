@@ -1,160 +1,250 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import SidebarUser from "./Sidebar";
 
-function UserProfile() {
+const SettingsPage = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    lastName: "",
-    email: "",
+    username: "Kate",
+    surname: "Paisley",
+    bio: "",
+    job: "Project Designer",
+    email: "Katepaisley@gmail.com",
     password: "",
-    confirmPassword: "",
+    location: "United States of America",
   });
+
+  const [image, setImage] = useState(null); // State to hold the uploaded image file
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:3300/api/v1/user/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const { name, lastName, email } = response.data;
-        setFormData({
-          name: name || "",
-          lastName: lastName || "",
-          email: email || "",
-          password: "",
-          confirmPassword: "",
-        });
-      } catch (error) {
-        setErrorMessage(error.response?.data?.message || "Failed to fetch user data.");
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
+  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Handle image file upload
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+    }
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSuccessMessage("");
+    setErrorMessage("");
 
-    if (formData.password && formData.password !== formData.confirmPassword) {
-      setErrorMessage("Passwords do not match!");
-      return;
+    const data = new FormData(); // Create a FormData object to send file and form fields
+    data.append("username", formData.username);
+    data.append("surname", formData.surname);
+    data.append("bio", formData.bio);
+    data.append("job", formData.job);
+    data.append("email", formData.email);
+    data.append("password", formData.password);
+    data.append("location", formData.location);
+    if (image) {
+      data.append("image", image);
     }
 
     try {
-      const token = localStorage.getItem("token");
-      const updateData = {
-        name: formData.name,
-        lastName: formData.lastName,
-        email: formData.email,
-      };
-
-      if (formData.password) {
-        updateData.password = formData.password;
-      }
-
-      await axios.put("http://localhost:3300/api/v1/user/update-profile", updateData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await fetch("https://api.example.com/update-profile", {
+        method: "POST",
+        body: data,
       });
 
-      setSuccessMessage("Profile updated successfully!");
-      setErrorMessage("");
+      if (response.ok) {
+        setSuccessMessage("Profile updated successfully!");
+      } else {
+        setErrorMessage("Failed to update profile. Please try again.");
+      }
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || "An error occurred.");
-      setSuccessMessage("");
+      setErrorMessage("An error occurred. Please try again later.");
+      console.error(error);
     }
   };
 
   return (
-    <div className="d-flex">
-      <SidebarUser />
-      <div className="container mt-5 ms-4">
-        <h1>User Profile Settings</h1>
-        {successMessage && <div className="alert alert-success">{successMessage}</div>}
-        {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+    <div style={styles.container}>
+      {/* Sidebar */}
+      <div style={{ width: "250px" }}>
+        <SidebarUser />
+      </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="name" className="form-label">Name</label>
+      {/* Main Content */}
+      <div style={styles.content}>
+        <h2>Personal Information</h2>
+
+        {/* Profile Image Section */}
+        <div style={styles.profilePicSection}>
+          <img
+            src={image ? URL.createObjectURL(image) : "https://via.placeholder.com/80"}
+            alt="Profile"
+            style={styles.profilePic}
+          />
+          <label style={styles.uploadButton}>
+            Upload
+            <input type="file" style={{ display: "none" }} onChange={handleImageChange} />
+          </label>
+          <button
+            style={styles.deleteButton}
+            onClick={() => setImage(null)} // Remove selected image
+          >
+            Delete
+          </button>
+        </div>
+
+        {/* Success and Error Messages */}
+        {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
+        {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+
+        {/* Form */}
+        <form style={styles.form} onSubmit={handleSubmit}>
+          <div style={styles.formGroup}>
+            <label>User name</label>
             <input
               type="text"
-              className="form-control"
-              id="name"
-              name="name"
-              value={formData.name}
+              name="username"
+              value={formData.username}
               onChange={handleChange}
-              required
+              style={styles.input}
             />
           </div>
 
-          <div className="mb-3">
-            <label htmlFor="lastName" className="form-label">Last Name</label>
+          <div style={styles.formGroup}>
+            <label>User surname</label>
             <input
               type="text"
-              className="form-control"
-              id="lastName"
-              name="lastName"
-              value={formData.lastName}
+              name="surname"
+              value={formData.surname}
               onChange={handleChange}
-              required
+              style={styles.input}
             />
           </div>
 
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">Email</label>
+  
+
+          <div style={styles.formGroup}>
+            <label>Job</label>
+            <input
+              type="text"
+              name="job"
+              value={formData.job}
+              onChange={handleChange}
+              style={styles.input}
+            />
+          </div>
+
+          <div style={styles.formGroup}>
+            <label>Email</label>
             <input
               type="email"
-              className="form-control"
-              id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              required
+              style={styles.input}
             />
           </div>
 
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">Password</label>
+          <div style={styles.formGroup}>
+            <label>Password</label>
             <input
               type="password"
-              className="form-control"
-              id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
+              style={styles.input}
             />
           </div>
 
-          <div className="mb-3">
-            <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+          <div style={styles.formGroup}>
+            <label>Location</label>
             <input
-              type="password"
-              className="form-control"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
+              type="text"
+              name="location"
+              value={formData.location}
               onChange={handleChange}
+              style={styles.input}
             />
           </div>
 
-          <button type="submit" className="btn btn-primary">Update Profile</button>
+          <div style={styles.buttonGroup}>
+            <button type="submit" style={styles.uploadButton}>
+              Add Profile
+            </button>
+          </div>
         </form>
       </div>
     </div>
   );
-}
+};
 
-export default UserProfile;
+const styles = {
+  container: {
+    display: "flex",
+    fontFamily: "Arial, sans-serif",
+    height: "100vh",
+    backgroundColor: "#f7f9fc",
+  },
+  content: {
+    flex: 1,
+    padding: "40px",
+    backgroundColor: "#fff",
+    margin: "20px",
+    borderRadius: "8px",
+    boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
+    height: "700px", // Set your desired height here
+    overflowY: "auto",
+  },
+  profilePicSection: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginBottom: "20px",
+  },
+  profilePic: {
+    width: "80px",
+    height: "80px",
+    borderRadius: "50%",
+  },
+  uploadButton: {
+    padding: "8px 16px",
+    backgroundColor: "#1abc9c",
+    color: "#fff",
+    border: "none",
+    cursor: "pointer",
+    borderRadius: "4px",
+  },
+  deleteButton: {
+    padding: "8px 16px",
+    backgroundColor: "#e74c3c",
+    color: "#fff",
+    border: "none",
+    cursor: "pointer",
+    borderRadius: "4px",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px",
+  },
+  formGroup: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  input: {
+    padding: "10px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+  },
+  textarea: {
+    padding: "10px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    resize: "none",
+    height: "80px",
+  },
+};
+
+export default SettingsPage;

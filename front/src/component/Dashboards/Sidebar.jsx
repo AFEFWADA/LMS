@@ -151,7 +151,7 @@ const SidebarUser = ({ user }) => {
             />
             <Item
               title="Quiz"
-              to="/quiz"
+              to="/affiche-quiz"
               icon={<EditNoteIcon />}
               selected={selected}
               setSelected={setSelected}
