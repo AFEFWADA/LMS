@@ -573,6 +573,38 @@ export const mockPieData = [
   },
 ];
 
+export const radarr = [
+  {
+    "taste": "fruity",
+    "chardonay": 60,
+    "carmenere": 60,
+    "syrah": 120
+  },
+  {
+    "taste": "bitter",
+    "chardonay": 90,
+    "carmenere": 34,
+    "syrah": 66
+  },
+  {
+    "taste": "heavy",
+    "chardonay": 50,
+    "carmenere": 20,
+    "syrah": 39
+  },
+  {
+    "taste": "strong",
+    "chardonay": 32,
+    "carmenere": 82,
+    "syrah": 91
+  },
+  {
+    "taste": "sunny",
+    "chardonay": 51,
+    "carmenere": 79,
+    "syrah": 100
+  }
+]
 
 // Question Types
 // 1. MCQs | Multiple Choice | single

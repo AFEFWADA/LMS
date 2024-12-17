@@ -9,7 +9,7 @@ function FeaturedTest() {
       <Box mb="30px">
         <Typography
           variant="h4"
-          color="#D7D4D4"
+          color="#333"
           fontWeight="bold"
           sx={{ mb: "5px" }}
         >
@@ -23,7 +23,7 @@ function FeaturedTest() {
       {/* GRID & STATS */}
       <Grid container spacing={3}>
         {/* ROW 1 */}
-        {[
+        {[ 
           { certificate: "PHP", date: "12-02-2019" },
           { certificate: "Java", date: "12-02-2019" },
           { certificate: "Machine Learning", date: "12-02-2019" },
@@ -32,14 +32,19 @@ function FeaturedTest() {
           <Grid item xs={12} sm={6} md={3} key={index}>
             <Box
               sx={{
-                backgroundColor: "#343a40",
+                backgroundColor: "#ffffff", 
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 height: "120px",
-                borderRadius: "8px",
                 padding: "10px",
-                boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.2)",
+                borderRadius: "8px", // Rounded corners for a softer look
+                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Lighter shadow
+                transition: "all 0.3s ease", // Smooth transition on hover
+                '&:hover': {
+                  boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.15)", // Darker shadow on hover
+                  transform: "translateY(-5px)", // Slight hover effect
+                },
               }}
             >
               <StatBox certificate={item.certificate} date={item.date} />
