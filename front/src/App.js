@@ -22,6 +22,7 @@ import SettingsPage from './component/Dashboards/SettingUser';
 import QuizLandingPage from './component/Dashboards/Admin/Createquiz';
 import QuizBuilder from './component/Dashboards/Admin/Allquiz';
 import AfficheQuiz from './component/Dashboards/Affichequiz';
+import  OffreUser from './component/Dashboards/OffreJob';
 
 
 
@@ -53,6 +54,8 @@ function App() {
             <Route path="/admin-quiz" element={<QuizLandingPage />} />
             <Route path="/create-quiz" element={<QuizBuilder />} />
             <Route path="/Affiche-quiz" element={<AfficheQuiz />} />
+            <Route path="/offre-job" element={< OffreUser />} />
+
 
 
 

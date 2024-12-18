@@ -122,8 +122,8 @@ const SidebarUser = ({ user }) => {
               setSelected={setSelected}
             />
             <Item
-              title="Certificate"
-              to="/certificate"
+              title="offre"
+              to="/offre-job"
               icon={<ReceiptOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

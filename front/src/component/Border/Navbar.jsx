@@ -6,19 +6,19 @@ import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { useAuth } from '../AuthContext'; // Importer le hook
+import { useAuth } from '../AuthContext'; 
 
 function Naavbar() {
   const location = useLocation(); 
   const navigate = useNavigate();
-  const { user, logout } = useAuth(); // Utiliser le contexte pour obtenir l'utilisateur et la fonction de déconnexion
+  const { user, logout } = useAuth(); 
 
   // Détermine si le bouton Login doit être affiché
   const showLoginButton = ["/", "/about-us", "/categories"].includes(location.pathname);
 
   const handleLogout = () => {
-    logout(); // Appeler la fonction de déconnexion
-    navigate('/'); // Rediriger vers la page d'accueil
+    logout();
+    navigate('/'); 
   };
 
   return (
