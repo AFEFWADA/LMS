@@ -26,5 +26,3 @@ const isAdmin = (req, res, next) => {
 };
 
 module.exports = { userAuth, isAdmin };
-
-
