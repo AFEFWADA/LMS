@@ -43,7 +43,7 @@ function QuizLandingPage() {
               fontSize: "16px",
             }}
           >
-            Create my first Quiz
+            Create Quiz
           </button>
         </div>
       </div>

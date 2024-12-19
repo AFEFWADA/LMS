@@ -12,25 +12,24 @@ import {
 import { DataGrid } from "@mui/x-data-grid";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import Header from "./Header";
 import SidebarComponent from "./Sidebar";
 import axios from "axios";
-
 const Team = () => {
   const [rows, setRows] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [error, setError] = useState(null);
 
-  const getToken = () => localStorage.getItem("token");
+  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:3300/api/v1/users/All-user", {
+        const user = JSON.parse(localStorage.getItem("user")); 
+        const response = await axios.get("http://localhost:3300/api/v1/users/all-users", {
           headers: {
-            Authorization: `Bearer ${getToken()}`,
+            Authorization: `Bearer ${user.token}`,
           },
         });
         setRows(response.data.data);
@@ -45,9 +44,10 @@ const Team = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3300/api/v1/users/${id}`, {
+      const user = JSON.parse(localStorage.getItem("user")); 
+      await axios.delete(`http://localhost:3300/api/v1/users/delete-user/${id}`, {
         headers: {
-          Authorization: `Bearer ${getToken()}`,
+          Authorization: `Bearer ${user.token}`,
         },
       });
       setRows((prevRows) => prevRows.filter((user) => user._id !== id));
@@ -66,9 +66,10 @@ const Team = () => {
 
   const handleSave = async () => {
     try {
-      const response = await axios.put(`http://localhost:3300/api/v1/users/${selectedUser._id}`, selectedUser, {
+      const user = JSON.parse(localStorage.getItem("user")); 
+      const response = await axios.patch(`http://localhost:3300/api/v1/users/update-user/${selectedUser._id}`, selectedUser, {
         headers: {
-          Authorization: `Bearer ${getToken()}`,
+          Authorization: `Bearer ${user.token}`,
         },
       });
       setRows((prevRows) => prevRows.map((user) => (user._id === response.data.data.user._id ? response.data.data.user : user)));
@@ -100,7 +101,6 @@ const Team = () => {
           borderRadius="4px"
         >
           {row.role === "admin" && <AdminPanelSettingsOutlinedIcon />}
-          {row.role === "manager" && <SecurityOutlinedIcon />}
           {row.role === "user" && <LockOpenOutlinedIcon />}
           <Typography color={"#e0e0e0"} sx={{ ml: "5px" }}>
             {row.role}
@@ -196,6 +196,15 @@ const Team = () => {
               value={selectedUser?.email || ""}
               onChange={(e) =>
                 setSelectedUser((prev) => ({ ...prev, email: e.target.value }))
+              }
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Rôle"
+              value={selectedUser?.role || ""}
+              onChange={(e) =>
+                setSelectedUser((prev) => ({ ...prev, role: e.target.value }))
               }
               fullWidth
               margin="normal"

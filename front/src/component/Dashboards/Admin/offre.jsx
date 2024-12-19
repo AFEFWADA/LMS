@@ -13,18 +13,13 @@ const Offre = () => {
 
   const handleFormSubmit = async (values, { resetForm }) => {
     try {
-      const token = localStorage.getItem('token');
-      console.log("Auth Token:", token);
-
-      if (!token) {
-        throw new Error("NO Auth");
-      }
+      const user = JSON.parse(localStorage.getItem("user")); 
 
       const response = await fetch("http://localhost:3300/api/v1/job/create-job", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          "Authorization": `Bearer ${user.token}`,
         },
         body: JSON.stringify({
           company: values.company,

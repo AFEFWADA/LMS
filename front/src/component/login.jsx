@@ -1,3 +1,4 @@
+// login.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -36,11 +37,13 @@ function Auth() {
           toast.success("Login réussi !");
           const { token, role, name } = data; 
           
-          login({ name }); // Appeler la fonction de login avec les données de l'utilisateur
-
-          // Stocker le token pour d'autres requêtes
-          localStorage.setItem('token', token);
+          // Stocker le token et les informations de l'utilisateur
+          const user = { token, name };
+          localStorage.setItem('user', JSON.stringify(user)); // Stockage du token et du nom
           
+          login(user); // Appeler la fonction de login avec les données de l'utilisateur
+
+          // Navigation en fonction du rôle
           if (role === 'admin') {
             navigate('/dashboard-admin');
           } else if (role === 'user') {

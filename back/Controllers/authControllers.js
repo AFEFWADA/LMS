@@ -1,4 +1,4 @@
-const User = require("../Models/UserModel");
+const UserModel = require("../Models/UserModel");
 
 const registerController = async function(req, res, next) {
     const { name, email, password } = req.body;
@@ -13,12 +13,12 @@ const registerController = async function(req, res, next) {
     }
 
     try {
-        const existingUser = await User.findOne({ email });
+        const existingUser = await UserModel.findOne({ email });
         if (existingUser) {
-        return next("Email already registered. Please log in");
+            return next("Email already registered. Please log in");
         }
-        const user = await User.create({ name, email, password });
-        //token 
+        const user = await UserModel.create({ name, email, password });
+        // Générer un token
         const token = user.createJWT();
         res.status(201).send({
             success: true,
@@ -34,6 +34,7 @@ const registerController = async function(req, res, next) {
         next(error);
     }
 };
+
 const loginController = async function (req, res, next) {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -41,7 +42,7 @@ const loginController = async function (req, res, next) {
     }
     try {
         // Trouver l'utilisateur par e-mail
-        const user = await User.findOne({ email }).select("+password role"); // Utilisez `user` au lieu de redéclarer `User`.
+        const user = await UserModel.findOne({ email }).select("+password role");
         if (!user) {
             return next("Invalid username or password");
         }
@@ -52,9 +53,9 @@ const loginController = async function (req, res, next) {
             return next("Invalid username or password");
         }
 
-        user.password = undefined;
+        user.password = undefined; // Ne pas inclure le mot de passe dans la réponse
         const token = user.createJWT();
-        
+
         res.status(200).json({
             success: true,
             message: "Login successfully",
@@ -65,7 +66,8 @@ const loginController = async function (req, res, next) {
     } catch (error) {
         next(error);
     }
-};;
+};
+
 module.exports = {
     registerController,
     loginController,

@@ -1,19 +1,13 @@
-const jobModel = require("../Models/jobModel");
-const mongoose = require("mongoose");
 
+const jobModel = require("../Models/jobModel");
+const Application = require("../Models/Application");
+const mongoose = require("mongoose");
+const Cv = require("../Models/CvModel.js");
 const createJobController = async (req, res, next) => {
     try {
-        // Déstructurer tous les champs nécessaires du corps de la requête
-        const {
-            company,
-            position,
-            workType,
-            workLocation,
-            company_phone,
-            company_email,
-        } = req.body;
-        if (!company || !position || !workType || !workLocation || !company_phone || !company_email) {
-            return next("Please provide all fields");
+        const { company, position } = req.body;
+        if (!company || !position) {
+            return next("Please Provide All Fields");
         }
         req.body.createdBy = req.user.userId;
         const job = await jobModel.create(req.body);
@@ -22,7 +16,6 @@ const createJobController = async (req, res, next) => {
         next(error);
     }
 };
-
 
 const getAllJobsController = async (req, res, next) => {
     try {
@@ -64,7 +57,6 @@ const updateJobsController = async (req, res, next) => {
         next(error);
     }
 };
-
 const deleteJobController = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -81,7 +73,6 @@ const deleteJobController = async (req, res, next) => {
         next(error);
     }
 };
-
 const jobStatsController = async (req, res, next) => {
     try {
         const stats = await jobModel.aggregate([
@@ -109,11 +100,53 @@ const jobStatsController = async (req, res, next) => {
         next(error);
     }
 };
+const applyForJob = async (req, res) => {
+    try {
+        //console.log("User data in applyForJob:", req.user);
+        const { jobId, resume, coverLetter } = req.body;
+        const userId = req.user.userId; // Assurez-vous que l'authentification est utilisée et l'utilisateur est connecté.
+        //console.log(userId);
+        if (!userId) {
+            return res.status(401).json({ message: "Unauthorized: User is not authenticated" });
+        }
+        // Vérifier si le job existe
+        const job = await jobModel.findById(jobId);
+        if (!job) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        // Vérifier si l'utilisateur a un CV
+        const userCv = await Cv.findOne({ createdBy: userId });
+        if (!userCv) {
+            return res.status(400).json({ message: "No CV found for this user" });
+        }
+
+        // Vérifier si une application existe déjà
+        const existingApplication = await Application.findOne({ job: jobId, user: userId });
+        if (existingApplication) {
+            return res.status(400).json({ message: "Application already submitted for this job" });
+        }
+
+        // Créer une nouvelle candidature
+        const application = new Application({
+            job: jobId,
+            user: userId,
+            resume: resume || userCv.file,
+            coverLetter,
+        });
+
+        await application.save();
+        return res.status(201).json({ message: "Application submitted successfully", application });
+    } catch (error) {
+        return res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
 module.exports=
 {
     createJobController,
     getAllJobsController,
     updateJobsController,
     deleteJobController,
-    jobStatsController
+    jobStatsController,
+    applyForJob
 };

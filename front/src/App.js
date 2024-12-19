@@ -25,7 +25,6 @@ import AfficheQuiz from './component/Dashboards/Affichequiz';
 import  OffreUser from './component/Dashboards/OffreJob';
 
 
-
 function App() {
 
 
@@ -45,7 +44,7 @@ function App() {
             <Route path="/offre" element={<Offre />} />
             <Route path="/cv" element={<GraduateProfile />} />
             <Route path="/all-cv" element={<AllCv />} />
-            <Route path="/quiz" element={<Quiz />} />
+            <Route path="/quiz/:quizId" element={<Quiz />} />
             <Route path="/alloffre" element={<Alloffre />} />
             <Route path="/cours" element={<CourseComponent />} />
             <Route path="/categories/ml" element={<MachineLearning />} />
@@ -55,7 +54,6 @@ function App() {
             <Route path="/create-quiz" element={<QuizBuilder />} />
             <Route path="/Affiche-quiz" element={<AfficheQuiz />} />
             <Route path="/offre-job" element={< OffreUser />} />
-
 
 
 

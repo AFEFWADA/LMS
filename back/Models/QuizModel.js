@@ -11,7 +11,7 @@ const questionSchema = new Schema({
         required: [true,"choices is require !!"] 
     },
     correctAnswer: {
-        type: Number,
+        type: String,
         required: [true,"correct Answer is require !!"] 
     },
     answeredResult: {

@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import SidebarUser from "./Sidebar";
+import axios from "axios"; // Import Axios
 
 const SettingsPage = () => {
   const [formData, setFormData] = useState({
     username: "Kate",
     surname: "Paisley",
-    bio: "",
     job: "Project Designer",
     email: "Katepaisley@gmail.com",
     password: "",
     location: "United States of America",
   });
 
-  const [image, setImage] = useState(null); // State to hold the uploaded image file
+  const [image, setImage] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -36,31 +36,44 @@ const SettingsPage = () => {
     setSuccessMessage("");
     setErrorMessage("");
 
+    // Validation de l'email
+    if (!formData.email || formData.email.trim() === "") {
+      setErrorMessage("Email is required");
+      return;
+    }
+
     const data = new FormData(); // Create a FormData object to send file and form fields
-    data.append("username", formData.username);
-    data.append("surname", formData.surname);
-    data.append("bio", formData.bio);
+    data.append("name", formData.username); // Changer "username" à "name"
+    data.append("lastName", formData.surname); // Changer "surname" à "lastName"
     data.append("job", formData.job);
     data.append("email", formData.email);
     data.append("password", formData.password);
     data.append("location", formData.location);
     if (image) {
-      data.append("image", image);
+      data.append("img", image); // Ajouter l'image s'il y en a une
     }
 
+    const token = localStorage.getItem("token"); // Obtenir le token JWT
     try {
-      const response = await fetch("https://api.example.com/update-profile", {
-        method: "POST",
-        body: data,
-      });
+      await axios.patch(
+        "http://127.0.0.1:3300/api/v1/users/update-profile/",
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Ajouter le token JWT
+            "Content-Type": "multipart/form-data", // Obligatoire pour FormData
+          },
+        }
+      );
 
-      if (response.ok) {
-        setSuccessMessage("Profile updated successfully!");
-      } else {
-        setErrorMessage("Failed to update profile. Please try again.");
-      }
+      setSuccessMessage("Profile updated successfully!");
+      setErrorMessage(""); // Effacer les messages d'erreur
     } catch (error) {
-      setErrorMessage("An error occurred. Please try again later.");
+      if (error.response && error.response.data) {
+        setErrorMessage(error.response.data.message || "Update failed");
+      } else {
+        setErrorMessage("An error occurred. Please try again later.");
+      }
       console.error(error);
     }
   };
@@ -123,8 +136,6 @@ const SettingsPage = () => {
             />
           </div>
 
-  
-
           <div style={styles.formGroup}>
             <label>Job</label>
             <input
@@ -147,16 +158,7 @@ const SettingsPage = () => {
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              style={styles.input}
-            />
-          </div>
+          
 
           <div style={styles.formGroup}>
             <label>Location</label>
@@ -171,7 +173,7 @@ const SettingsPage = () => {
 
           <div style={styles.buttonGroup}>
             <button type="submit" style={styles.uploadButton}>
-              Add Profile
+              Update Profile
             </button>
           </div>
         </form>
@@ -237,13 +239,6 @@ const styles = {
     padding: "10px",
     border: "1px solid #ccc",
     borderRadius: "4px",
-  },
-  textarea: {
-    padding: "10px",
-    border: "1px solid #ccc",
-    borderRadius: "4px",
-    resize: "none",
-    height: "80px",
   },
 };
 

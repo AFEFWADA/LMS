@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import SidebarComponent from "./Sidebar";
+import axios from 'axios';
 
 const QuizBuilder = () => {
   const [quizName, setQuizName] = useState('');
-  const [questions, setQuestions] = useState([
-    { question: '', choices: ['', ''], correctAnswer: '' }
-  ]);
+  const [questions, setQuestions] = useState([{ question: '', choices: ['', ''], correctAnswer: '' }]);
+  const [icon, setIcon] = useState(null);
 
   const handleQuizNameChange = (e) => {
     setQuizName(e.target.value);
@@ -50,15 +50,42 @@ const QuizBuilder = () => {
     setQuestions(newQuestions);
   };
 
-  const handleSave = () => {
-    const quizData = {
-      name: quizName,
-      questions: questions,
-    };
-    console.log('Quiz Data:', quizData);
-    // Save quiz data to the server/database here.
+  const handleIconChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        setIcon(file); // Stockez le fichier directement dans l'état
+    }
   };
 
+  const handleSave = async () => {
+    const quizData = {
+      quizTitle: quizName,
+      quizQuestions: questions.map(q => ({
+          mainQuestion: q.question, // Change this from 'question' to 'mainQuestion'
+          choices: q.choices,
+          correctAnswer: q.correctAnswer,
+      })),
+  };
+  
+    const formData = new FormData();
+    formData.append('icon', icon); // Assuming you're handling file uploads
+    formData.append('quizTitle', quizData.quizTitle);
+    formData.append('quizQuestions', JSON.stringify(quizData.quizQuestions)); // Send questions as JSON
+
+    try {
+      const user = JSON.parse(localStorage.getItem("user")); 
+      const response = await axios.post('http://localhost:3300/api/v1/quiz/create-Quiz', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      console.log('Quiz created successfully:', response.data);
+    } catch (error) {
+      console.error('Error creating quiz:', error.response ? error.response.data : error.message);
+    }
+  };
+  
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
       {/* Sidebar Section */}
@@ -91,35 +118,30 @@ const QuizBuilder = () => {
             />
           </div>
 
+          {/* Icon Upload */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ fontSize: '16px', fontWeight: 'bold', display: 'block', marginBottom: '10px' }}>
+              Upload Icon:
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleIconChange}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '8px',
+                border: '1px solid #ccc',
+              }}
+            />
+          </div>
+
           {/* Quiz Questions */}
           {questions.map((q, qIndex) => (
-            <div
-              key={qIndex}
-              style={{
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                padding: '20px',
-                marginBottom: '20px',
-                backgroundColor: '#ffffff',
-                boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-                position: 'relative',
-              }}
-            >
+            <div key={qIndex} style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '20px', marginBottom: '20px', backgroundColor: '#ffffff' }}>
               <button
                 onClick={() => deleteQuestion(qIndex)}
-                style={{
-                  position: 'absolute',
-                  top: '10px',
-                  right: '10px',
-                  backgroundColor: 'red',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '50%',
-                  width: '20px',
-                  height: '20px',
-                  fontSize: '12px',
-                  cursor: 'pointer',
-                }}
+                style={{ position: 'absolute', top: '10px', right: '10px', backgroundColor: 'red', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', fontSize: '12px', cursor: 'pointer' }}
               >
                 X
               </button>
@@ -146,17 +168,8 @@ const QuizBuilder = () => {
               <div style={{ marginBottom: '10px' }}>
                 <label style={{ fontWeight: 'bold', marginBottom: '5px' }}>Choices:</label>
                 {q.choices.map((choice, cIndex) => (
-                  <div
-                    key={cIndex}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      marginBottom: '10px',
-                    }}
-                  >
-                    <span style={{ marginRight: '10px', fontWeight: 'bold' }}>
-                      {String.fromCharCode(65 + cIndex)}:
-                    </span>
+                  <div key={cIndex} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <span style={{ marginRight: '10px', fontWeight: 'bold' }}>{String.fromCharCode(65 + cIndex)}:</span>
                     <input
                       type="text"
                       placeholder={`Choice ${cIndex + 1}`}
@@ -232,25 +245,21 @@ const QuizBuilder = () => {
               border: 'none',
               borderRadius: '6px',
               cursor: 'pointer',
-              width: '100%',
-              marginTop: '20px',
+              marginBottom: '20px',
             }}
           >
-            Add a New Question
+            Add New Question
           </button>
 
-          {/* Save Button */}
           <button
             onClick={handleSave}
             style={{
-              backgroundColor: 'green',
+              backgroundColor: 'blue',
               color: 'white',
               padding: '12px 20px',
               border: 'none',
               borderRadius: '6px',
               cursor: 'pointer',
-              width: '100%',
-              marginTop: '20px',
             }}
           >
             Save Quiz

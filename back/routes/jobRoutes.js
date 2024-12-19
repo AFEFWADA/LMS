@@ -5,7 +5,8 @@ const {
     getAllJobsController,
     updateJobsController,
     deleteJobController,
-    jobStatsController
+    jobStatsController,
+    applyForJob
 } = require("../Controllers/jobControllers.js");
 const router = express.Router();
 //console.log(typeof createJobController);
@@ -15,9 +16,9 @@ const router = express.Router();
 //console.log(typeof jobStatsController);
 
 router.post("/create-job", userAuth, createJobController);
-//router.get("/get-job", userAuth, getAllJobsController);
 router.get("/get-job",getAllJobsController);
 router.patch("/update-job/:id", userAuth, updateJobsController);
 router.delete("/delete-job/:id", userAuth, deleteJobController);
 router.delete("/job-stats", userAuth, jobStatsController);
+router.post("/apply", userAuth, applyForJob);
 module.exports = router;

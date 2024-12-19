@@ -1,10 +1,19 @@
 const express = require("express");
-const { updateUserController,getAllUsers } = require("../Controllers/userController.js");
+const {
+    getAllUsers,
+    updateProfileController,
+    getUserById,
+    updateUserController,
+    deleteUser
+} = require("../Controllers/userController");
 const {userAuth,isAdmin} = require("../middelwares/authMiddleware.js");
+const {upload} = require("../middelwares/multer.js");
 const router = express.Router();
-//console.log(typeof updateUserController); 
-//console.log(typeof userAuth); 
-router.patch("/update-user/:id", userAuth, updateUserController);
-router.get("/All-user",userAuth,isAdmin,getAllUsers);
+
+router.patch("/update-profile", userAuth, upload.single("img"), updateProfileController);
+router.patch("/update-user/:id", userAuth, isAdmin, updateUserController);
+router.get("/all-users", userAuth, isAdmin, getAllUsers);
+router.get("/user/:id", userAuth, isAdmin, getUserById);
+router.delete("/delete-user/:id", userAuth, deleteUser);
 
 module.exports = router;
